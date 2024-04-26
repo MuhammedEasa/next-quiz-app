@@ -9,7 +9,7 @@ import {
   
 const DropOptions = () => {
   return (
-    <section className="flex justify-evenly items-center py-5">
+    <section className="flex justify-evenly items-center py-5 w-full">
       <div className="px-7 py-4 w-1/3 mx-4">
       <DropdownMenu>
   <DropdownMenuTrigger className="flex outline-none justify-between w-full px-10 py-3 rounded-lg shadow-lg hover:bg-blue-600 hover:text-gray-100">SELECT CATEGORY</DropdownMenuTrigger>

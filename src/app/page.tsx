@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import DropOptions from "@/components/DropDownOptions";
 
 export default function Home() {
@@ -22,8 +23,11 @@ export default function Home() {
         required
       />
     </div>
-  <DropOptions/>
-
+    <div className="flex flex-col justify-center items-center">
+    <DropOptions/>
+        <Button/>
+    </div>
+  
   </section>
 </section>
   );
