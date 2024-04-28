@@ -1,0 +1,65 @@
+{
+  "response_code": 0,
+  "results": [
+    {
+      "type": "multiple",
+      "difficulty": "easy",
+      "category": "Money",
+      "question": "What is the name of the currency used in Japan?",
+      "correct_answer": "Yen",
+      "incorrect_answers": [
+        "Dollar",
+        "Euro",
+        "Pound"
+      ]
+    },
+    {
+      "type": "multiple", 
+      "difficulty": "easy",
+      "category": "Sports",
+      "question": "Which sport is played on a pitch with goals and a net at each end?",
+      "correct_answer": "Soccer",
+      "incorrect_answers": [
+        "Basketball",
+        "Tennis",
+        "Baseball"
+      ]
+    },
+    {
+      "type": "multiple",
+      "difficulty": "easy", 
+      "category": "Business",
+      "question": "What is the name of the online retailer founded by Jeff Bezos?",
+      "correct_answer": "Amazon",
+      "incorrect_answers": [
+        "eBay",
+        "Alibaba",
+        "Walmart"
+      ]
+    },
+    {
+      "type": "multiple",
+      "difficulty": "easy",
+      "category": "Tech", 
+      "question": "What is the name of the mobile operating system developed by Google?",
+      "correct_answer": "Android",
+      "incorrect_answers": [
+        "iOS",
+        "Windows Phone",
+        "BlackBerry OS"
+      ]
+    },
+    {
+      "type": "multiple",
+      "difficulty": "easy",
+      "category": "Fitness",
+      "question": "What is the name of the exercise that involves raising your body up from a prone position using your arms?",
+      "correct_answer": "Push-ups",
+      "incorrect_answers": [
+        "Sit-ups", 
+        "Squats",
+        "Lunges"
+      ]
+    }
+  ]
+ }

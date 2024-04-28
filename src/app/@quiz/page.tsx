@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import clsx from "clsx";
 import { Player } from "@lottiefiles/react-lottie-player";
+import fallbackQuestions from "./fallbackQuestions.json";
 
 const Page = () => {
   const [questions, setQuestions] = useState<any>([]);
@@ -17,8 +18,9 @@ const Page = () => {
     const getQuestions = async () => {
       setLoading(true);
       try {
+        const numberOfQuestions = config.numberOfQuestions || 5;
         const response = await fetch(
-          ` https://opentdb.com/api.php?amount=${config.numberOfQuestions}&category=${config.category.id}&difficulty=${config.level}&type=${config.type}`
+          `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${config.category.id}&difficulty=${config.level}&type=${config.type}`
         );
         const { results } = await response.json();
         console.log(results);
@@ -34,6 +36,16 @@ const Page = () => {
         setQuestions([...shuffledResults]);
       } catch (error) {
         console.error(error);
+        // API call failed, use the fallback JSON data
+        let shuffledResults = fallbackQuestions.results.map((e) => {
+          let value = [...e.incorrect_answers, e.correct_answer]
+            .map((value) => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
+          e.answers = [...value];
+          return e;
+        });
+        setQuestions([...shuffledResults]);
       } finally {
         setLoading(false);
       }
@@ -41,12 +53,14 @@ const Page = () => {
 
     getQuestions();
   }, [config.category, config.level, config.numberOfQuestions, config.type]);
+
   const answerCheck = (ans: string) => {
     if (ans === questions[0].correct_answer) {
       addScore();
     }
     setAnswer(questions[0].correct_answer);
   };
+
   const handleNext = () => {
     let remainingQuestions = [...questions];
     remainingQuestions.shift();
@@ -79,7 +93,9 @@ const Page = () => {
       {!questions?.length && !loading && (
         <div className="flex flex-col justify-center items-center">
           <Player
-            src="https://assets6.lottiefiles.com/packages/lf20_touohxv0.json"
+          //  src="https://assets6.lottiefiles.com/packages/lf20_touohxv0.json"
+         //   src="https://lottie.host/3e2cb5b8-e65f-4ae3-9538-7c4bde5f2a84/70FuVhu7R1.json"
+            src="https://lottie.host/f172f0c2-7fec-4df9-b6cc-a2e99f33d6ef/hq04VOExek.json"
             className="player"
             loop
             autoplay
