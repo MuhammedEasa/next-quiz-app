@@ -1,7 +1,11 @@
+"use client"
 import Button from "@/components/Button";
 import DropOptions from "@/components/DropDownOptions";
-
+import useQuiz from "./store";
 export default function Home() {
+const quizConfig = useQuiz(state=>state.config)
+console.log(quizConfig);
+
   return (
 <section className="flex flex-col justify-center items-center my-10">
   <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
