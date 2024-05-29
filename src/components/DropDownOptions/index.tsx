@@ -20,10 +20,10 @@ const Type = ["boolean", "multiple"];
 const Level = ["easy", "medium", "hard"];
 const DropOptions = () => {
   const [categories, setCategories] = useState<categoryType[]>([]);
-  const addCategory = useQuiz((state) => state.addCategory);
-  const addLevel = useQuiz((state) => state.addLevel);
-  const addType = useQuiz((state) => state.addType);
-  const config = useQuiz((state) => state.config);
+  const addCategory = useQuiz((state:any) => state.addCategory);
+  const addLevel = useQuiz((state:any) => state.addLevel);
+  const addType = useQuiz((state:any) => state.addType);
+  const config = useQuiz((state:any) => state.config);
 
   useEffect(() => {
     async function fetchCategory() {
@@ -43,60 +43,57 @@ const DropOptions = () => {
   }, []);
 
   return (
-    <section className="flex justify-evenly items-center py-5 w-full">
-      <div className="px-7 py-4 w-1/3 mx-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex outline-none justify-between w-full px-10 py-3 rounded-lg shadow-lg hover:bg-blue-600 hover:text-gray-100">
-            {config.category.name ? config.category.name : "CATEGORY"}{" "}
-            <ChevronDown />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>SELECT CATEGORY</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {categories.map((category) => (
-              <DropdownMenuItem
-                key={category.id}
-                onClick={() => addCategory(category.id, category.name)}
-              >
-                {category.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="px-7 py-4 w-1/3 mx-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex outline-none justify-between w-full px-10 py-3 rounded-lg shadow-lg hover:bg-blue-600 hover:text-gray-100">
-            {config.level ? config.level : " SELECT LEVEL"} <ChevronDown />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>SELECT LEVEL</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {Level.map((e) => (
-              <DropdownMenuItem key={e} onClick={() => addLevel(e)}>
-                {e}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="px-7 py-4 w-1/3 mx-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex outline-none justify-between w-full px-10 py-3 rounded-lg shadow-lg hover:bg-blue-600 hover:text-gray-100">
-            {config.type ? config.type : "SELECT TYPE"} <ChevronDown />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>SELECT TYPE</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {Type.map((e) => (
-              <DropdownMenuItem key={e} onClick={() => addType(e)}>
-                {e}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </section>
+    <section className="flex justify-center items-center py-5 w-full">
+    <div className="w-1/3 mx-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex justify-between w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-blue-600">
+          {config.category.name ? config.category.name : "CATEGORY"} <ChevronDown />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>SELECT CATEGORY</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {categories.map((category) => (
+            <DropdownMenuItem key={category.id} onClick={() => addCategory(category.id, category.name)}>
+              {category.name}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div className="w-1/3 mx-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex justify-between w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-blue-600">
+          {config.level ? config.level : "SELECT LEVEL"} <ChevronDown />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>SELECT LEVEL</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {Level.map((e) => (
+            <DropdownMenuItem key={e} onClick={() => addLevel(e)}>
+              {e}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+    <div className="w-1/3 mx-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex justify-between w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-lg shadow-lg hover:bg-blue-600 hover:text-white dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-blue-600">
+          {config.type ? config.type : "SELECT TYPE"} <ChevronDown />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>SELECT TYPE</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {Type.map((e) => (
+            <DropdownMenuItem key={e} onClick={() => addType(e)}>
+              {e}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  </section>
+  
   );
 };
 

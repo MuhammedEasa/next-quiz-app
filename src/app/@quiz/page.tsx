@@ -3,56 +3,83 @@ import { useEffect, useState } from "react";
 import useQuiz from "../store";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import clsx from "clsx";
 import { Player } from "@lottiefiles/react-lottie-player";
 import fallbackQuestions from "./fallbackQuestions.json";
+import { ModeToggle } from "@/components/darkmodeui";
 
 const Page = () => {
   const [questions, setQuestions] = useState<any>([]);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
-  const config = useQuiz((state) => state.config);
-  const addScore = useQuiz((state) => state.addScore);
+  const config = useQuiz((state: any) => state.config);
+  const addScore = useQuiz((state: any) => state.addScore);
+
+  interface QuestionData {
+    type: string;
+    difficulty: string;
+    category: string;
+    question: string;
+    correct_answer: string;
+    incorrect_answers: string[];
+    answers?: string[];
+  }
 
   useEffect(() => {
     const getQuestions = async () => {
       setLoading(true);
       try {
-        const numberOfQuestions = config.numberOfQuestions || 5;
-        const response = await fetch(
-          `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${config.category.id}&difficulty=${config.level}&type=${config.type}`
-        );
-        const { results } = await response.json();
-        console.log(results);
-        let shuffledResults = results.map((e) => {
-          let value = [...e.incorrect_answers, e.correct_answer]
-            .map((value) => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-          e.answers = [...value];
-          return e;
-        });
-        console.log(shuffledResults, "shuffled");
-        setQuestions([...shuffledResults]);
+        if (questions.length === 0) {
+          const numberOfQuestions = config.numberOfQuestions || 5;
+          const response = await fetch(
+            `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${config.category.id}&difficulty=${config.level}&type=${config.type}`
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const { results } = await response.json();
+          console.log("api results", results);
+
+          if (results.length === 0) {
+            // API call failed, use the fallback JSON data
+            let shuffledResults: QuestionData[] = fallbackQuestions.results.map(
+              (e: QuestionData) => {
+                let value = [...e.incorrect_answers, e.correct_answer]
+                  .map((value) => ({ value, sort: Math.random() }))
+                  .sort((a, b) => a.sort - b.sort)
+                  .map(({ value }) => value);
+                e.answers = [...value];
+                return e;
+              }
+            );
+            console.log(shuffledResults, "Json shuffled");
+            setQuestions([...shuffledResults]);
+            return;
+          }
+
+          let shuffledResults: QuestionData[] = results.map(
+            (e: QuestionData) => {
+              let value = [...e.incorrect_answers, e.correct_answer]
+                .map((value) => ({ value, sort: Math.random() }))
+                .sort((a, b) => a.sort - b.sort)
+                .map(({ value }) => value);
+              e.answers = [...value];
+              return e;
+            }
+          );
+          console.log(shuffledResults, "Api shuffled");
+          setQuestions([...shuffledResults]);
+        }
       } catch (error) {
         console.error(error);
-        // API call failed, use the fallback JSON data
-        let shuffledResults = fallbackQuestions.results.map((e) => {
-          let value = [...e.incorrect_answers, e.correct_answer]
-            .map((value) => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-          e.answers = [...value];
-          return e;
-        });
-        setQuestions([...shuffledResults]);
       } finally {
         setLoading(false);
       }
     };
 
     getQuestions();
-  }, [config.category, config.level, config.numberOfQuestions, config.type]);
+  }, []);
 
   const answerCheck = (ans: string) => {
     if (ans === questions[0].correct_answer) {
@@ -69,9 +96,10 @@ const Page = () => {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center p-20 ">
+    <section className="flex flex-col justify-center items-center min-h-screen p-4 bg-gray-100 dark:bg-gray-900">
+      <ModeToggle />
       {questions?.length ? (
-        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-gray-200">
           Question No{" "}
           <span className="text-blue-600 dark:text-blue-500">
             #{config.numberOfQuestions - questions.length + 1}
@@ -81,20 +109,19 @@ const Page = () => {
       ) : null}
       {loading && (
         <div className="flex flex-col">
-          <Skeleton className="w-[600px] h-[60px] my-10 rounded-sm" />
-
-          <Skeleton className="w-[600px] h-[500px] rounded-sm" />
+          <Skeleton className="w-full h-16 my-10 rounded-sm" />
+          <Skeleton className="w-full h-64 rounded-sm" />
         </div>
       )}
 
       {!loading && !!questions?.length && (
-        <p className="text-2xl ">Score: {config.score}</p>
+        <p className="text-2xl text-gray-900 dark:text-gray-200">
+          Score: {config.score}
+        </p>
       )}
       {!questions?.length && !loading && (
         <div className="flex flex-col justify-center items-center">
           <Player
-          //  src="https://assets6.lottiefiles.com/packages/lf20_touohxv0.json"
-         //   src="https://lottie.host/3e2cb5b8-e65f-4ae3-9538-7c4bde5f2a84/70FuVhu7R1.json"
             src="https://lottie.host/f172f0c2-7fec-4df9-b6cc-a2e99f33d6ef/hq04VOExek.json"
             className="player"
             loop
@@ -111,33 +138,31 @@ const Page = () => {
             onClick={() => {
               window.location.reload();
             }}
-            className="bg-white hover:bg-gray-100 my-10 text-gray-800 font-semibold py-2 px-10 border border-gray-400 rounded shadow"
+            className="mt-6 px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
             Start Over
           </button>
         </div>
       )}
 
-      {!questions && <p>loading...</p>}
       {!!questions && !!questions?.length && (
-        <section className="shadow-2xl my-10 p-10 w-[90%] rounded-lg flex flex-col justify-center items-center shadow-blue-200  ">
-          <h4 className="mb-4 text-center  text-xl font-extrabold leading-none tracking-tight md:text-2xl lg:text-4xl  text-blue-600 dark:text-blue-500">
+        <section className="w-full max-w-md p-6 mt-6 bg-white rounded-md shadow-md dark:bg-gray-800">
+          <h4 className="mb-4 text-xl font-bold text-center text-blue-600 dark:text-blue-500">
             {questions[0].question}
           </h4>
-          <div className="flex justify-evenly items-center w-full my-20 flex-wrap">
+          <div className="flex flex-wrap justify-between mt-6">
             {questions[0].answers.map((e: string) => {
               return (
                 <button
                   key={e}
                   onClick={() => answerCheck(e)}
                   className={cn(
-                    "w-[40%] my-4 bg-white hover:bg-blue-600 hover:text-gray-100  text-gray-800 font-semibold py-4 px-4 shadow-blue-200   rounded-lg shadow-2xl",
+                    "w-full sm:w-48 mb-4 px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:hover:bg-gray-600",
                     {
-                      "bg-blue-600": !!answer && answer === e,
-                      "bg-red-600": !!answer && answer !== e,
-                      "hover:bg-blue-600": !!answer && answer === e,
-                      "hover:bg-red-600": !!answer && answer !== e,
-                      "text-gray-200": !!answer,
+                      "bg-green-500": !!answer && answer === e,
+                      "bg-red-500": !!answer && answer !== e,
+                      "hover:bg-green-500": !!answer && answer === e,
+                      "hover:bg-red-500": !!answer && answer !== e,
                     }
                   )}
                 >
@@ -149,7 +174,7 @@ const Page = () => {
 
           <button
             onClick={handleNext}
-            className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-10 border border-gray-400 rounded shadow"
+            className="w-full px-4 py-2 mt-6 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
             Next
           </button>

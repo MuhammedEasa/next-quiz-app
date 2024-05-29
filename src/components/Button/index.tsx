@@ -3,7 +3,7 @@ import useQuiz from "@/app/store";
 import React from "react";
 
 const Button = () => {
-  const addStatus = useQuiz((state) => state.addStatus);
+  const addStatus = useQuiz((state:any) => state.addStatus);
   return (
     <button
       type="button"
